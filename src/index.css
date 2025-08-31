@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Thin';
+  src: url('/fonts/Lausanne-300.woff2');
+}
+
+@font-face {
+  font-family: 'Bold';
+  src: url('/fonts/Lausanne-500.woff2');
+}
+
+/* Remove all scrollbars */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* WebKit */
+}
+
+html, body {
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+
+.moveX {
+  animation-name: moveAnimation;
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.moveLink {
+  opacity: 0;
+  transition: all ease 0.3s;
+}
+
+.link:hover .moveLink {
+  opacity: 1;
+}
+
+@keyframes moveAnimation {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* Faster scrolling banner animation for contact page */
+.animate-scroll-fast {
+  animation: scroll 5s linear infinite;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Custom animations for homepage */
+.animate-spin-slow {
+  animation: spin 8s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Text glow effect */
+.text-glow {
+  text-shadow: 0 0 10px rgba(211, 253, 80, 0.5);
+}
+
+/* Floating animation */
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
