@@ -6,12 +6,12 @@ import Agency from './pages/Agency'
 import Blog from './pages/Blog'
 import Contact from './pages/Contact'
 import Navbar from './components/navigation/Navbar'
-import NavContext from './context/NavContext'
+import NavProvider from './context/NavProvider'
 import FullScreenNav from './components/navigation/FullScreenNav'
 
 const App = () => {
   return (
-    <NavContext>
+    <NavProvider>
       <div className='overflow-x-hidden'>
         <Navbar />
         <FullScreenNav />
@@ -23,7 +23,7 @@ const App = () => {
           <Route path='/blog' element={<Blog />} />
         </Routes>
       </div>
-    </NavContext>
+    </NavProvider>
   )
 }
 

@@ -1,7 +1,7 @@
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/all';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion, useScroll, useTransform } from 'framer-motion';
 
@@ -12,11 +12,7 @@ const Agency = () => {
   const textContainerRef = useRef(null);
   const containerRef = useRef(null);
   const page3ImageRef = useRef(null);
-  const page3SecondImageRef = useRef(null);
   const page3Ref = useRef(null);
-
-  // Dynamic index for team members
-  const [currentMemberIndex, setCurrentMemberIndex] = useState(0);
 
   // Disable browser scroll restoration
   useEffect(() => {
@@ -62,21 +58,13 @@ const Agency = () => {
     'https://k72.ca/uploads/teamMembers/joel_480X640_3-480x640.jpg',
   ];
 
-  // Team members data for page 3
-  const teamMembers = [
-    { 
-      firstName: 'HUGO', 
-      lastName: 'JOSEPH', 
-      position: 'CREATIVE DIRECTOR AJDOINT', 
-      image: 'https://k72.ca/uploads/teamMembers/HugoJoseph_640X960-640x960.jpg' 
-    },
-    { 
-      firstName: 'SÉBASTIEN', 
-      lastName: 'ROY', 
-      position: 'DEPUTY CREATIVE DIRECTOR', 
-      image: 'https://k72.ca/uploads/teamMembers/SebR_640X960-640x960.jpg' 
-    },
-  ];
+  // Team member data for page 3
+  const teamMember = {
+    firstName: 'HUGO',
+    lastName: 'JOSEPH',
+    position: 'CREATIVE DIRECTOR AJDOINT',
+    image: 'https://k72.ca/uploads/teamMembers/HugoJoseph_640X960-640x960.jpg'
+  };
 
   useGSAP(() => {
     if (!imageDivRef.current || !textContainerRef.current) return;
@@ -107,55 +95,27 @@ const Agency = () => {
 
     // Page 3 animations
     if (page3Ref.current) {
-      // First name animation - right to left
-      gsap.fromTo('.page3-first-name',
-        { x: '100%' },
-        {
-          x: '-100%',
-          duration: 6,
-          ease: 'none',
-          repeat: -1,
-          repeatDelay: 3,
-        }
-      );
+      // First name animation - right to left (single pass with delay)
+      gsap.set('.page3-first-name', { x: '100%' });
+      gsap.to('.page3-first-name', {
+        x: '-100%',
+        duration: 5,
+        ease: 'none',
+        repeat: -1,
+        repeatDelay: 0,
+      });
 
-      // Last name + position animation - left to right
-      gsap.fromTo('.page3-last-name-position',
-        { x: '-100%' },
-        {
-          x: '100%',
-          duration: 8,
-          ease: 'none',
-          repeat: -1,
-          repeatDelay: 3,
-        }
-      );
-
-      // Second image sliding up on scroll
-      ScrollTrigger.create({
-        trigger: page3Ref.current,
-        start: 'top 50%',
-        end: 'bottom 50%',
-        scrub: 1,
-        onUpdate: (self) => {
-          console.log('Page 3 scroll progress:', self.progress);
-          
-          // Second image slides up gradually with scroll
-          if (page3SecondImageRef.current) {
-            const translateY = (1 - self.progress) * 100;
-            console.log('TranslateY value:', translateY);
-            page3SecondImageRef.current.style.transform = `translateY(${translateY}%)`;
-          }
-
-          // Change member details when second image is 50% visible
-          const newMemberIndex = self.progress >= 0.5 ? 1 : 0;
-          if (newMemberIndex !== currentMemberIndex) {
-            setCurrentMemberIndex(newMemberIndex);
-          }
-        },
+      // Last name + position animation - left to right (continuous)
+      gsap.set('.page3-last-name-position', { x: '-100%' });
+      gsap.to('.page3-last-name-position', {
+        x: '100%',
+        duration: 5,
+        ease: 'none',
+        repeat: -1,
+        repeatDelay: 0,
       });
     }
-  }, [currentMemberIndex]);
+  }, []);
 
   return (
     <motion.div
@@ -212,65 +172,35 @@ const Agency = () => {
       <section id='page3' ref={page3Ref} className="h-screen relative overflow-hidden">
         {/* Team member images */}
         <div className="flex items-center justify-center h-full">
-          <div className="relative w-[500px] h-[700px] rounded-2xl overflow-hidden">
+          <div className="relative w-[600px] h-[800px] rounded-2xl overflow-hidden z-2">
             {/* First team member image - always visible */}
             <img
               ref={page3ImageRef}
-              src={teamMembers[0].image}
-              alt="Hugo Joseph"
+              src={teamMember.image}
+              alt={`${teamMember.firstName} ${teamMember.lastName}`}
               className="absolute inset-0 w-full h-full object-cover"
-            />
-            {/* Second team member image - slides up from bottom */}
-            <img
-              ref={page3SecondImageRef}
-              src={teamMembers[1].image}
-              alt="Sébastien Roy"
-              className="absolute inset-0 w-full h-full object-cover"
-              style={{ transform: 'translateY(100%)' }}
             />
           </div>
         </div>
 
         {/* First name banner - right to left */}
-        <div className="absolute top-1/3 left-0 w-full overflow-hidden">
+        <div className="absolute top-1/3 left-0 w-full overflow-hidden z-1">
           <div className="page3-first-name whitespace-nowrap">
-            <span className="text-9xl font-[Bold] text-[#D3FD50] mr-20">
-              {teamMembers[currentMemberIndex].firstName}
-            </span>
-            <span className="text-9xl font-[Bold] text-[#D3FD50] mr-20">
-              {teamMembers[currentMemberIndex].firstName}
-            </span>
-            <span className="text-9xl font-[Bold] text-[#D3FD50] mr-20">
-              {teamMembers[currentMemberIndex].firstName}
+            <span className="text-9xl font-[Bold] text-[#D3FD50] inline-block">
+              {teamMember.firstName}
             </span>
           </div>
         </div>
 
         {/* Last name + position banner - left to right */}
-        <div className="absolute bottom-1/3 left-0 w-full overflow-hidden">
-          <div className="page3-last-name-position whitespace-nowrap">
-            <div className="inline-flex items-baseline mr-[300px]">
-              <span className="text-9xl font-[Bold] text-[#D3FD50] mr-8">
-                {teamMembers[currentMemberIndex].lastName}
+        <div className="absolute bottom-1/3 left-0 w-full overflow-hidden z-10">
+          <div className="page3-last-name-position whitespace-nowrap flex">
+            <div className="inline-flex items-baseline mr-24">
+              <span className="text-9xl font-[Bold] text-[#D3FD50] inline-block mr-[50px]">
+                {teamMember.lastName}
               </span>
-              <span className="text-5xl font-[Bold] text-white">
-                {teamMembers[currentMemberIndex].position}
-              </span>
-            </div>
-            <div className="inline-flex items-baseline mr-[300px]">
-              <span className="text-9xl font-[Bold] text-[#D3FD50] mr-8">
-                {teamMembers[currentMemberIndex].lastName}
-              </span>
-              <span className="text-5xl font-[Bold] text-white">
-                {teamMembers[currentMemberIndex].position}
-              </span>
-            </div>
-            <div className="inline-flex items-baseline mr-[300px]">
-              <span className="text-9xl font-[Bold] text-[#D3FD50] mr-8">
-                {teamMembers[currentMemberIndex].lastName}
-              </span>
-              <span className="text-5xl font-[Bold] text-white">
-                {teamMembers[currentMemberIndex].position}
+              <span className="text-5xl font-[Bold] text-gray-300">
+                {teamMember.position}
               </span>
             </div>
           </div>
@@ -280,4 +210,4 @@ const Agency = () => {
   );
 };
 
-export default Agency;
+export default Agency
